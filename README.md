@@ -21,12 +21,11 @@ construido:
 | 5 | `useState` II: estado derivado + buscador | `categoriaActiva` y `termino` son los únicos datos guardados; la lista visible y las categorías se **calculan** en cada render, nunca se guardan aparte. |
 | 6 | Context API + React Router + Checkout | El carrito vive en `CarritoProvider` (`aplicacion/carrito_context.tsx`) + `useCarrito()`. `App` define rutas: `Layout` (Header + `Outlet` + Footer) envuelve `Home` (el catálogo) y `Checkout` (formulario controlado, guarda el pedido en `localStorage`). `ProductCard` y `CartPanel` ya leen el carrito directo del Context, sin recibir nada por props. |
 | 7 | Arquitectura hexagonal + JWT + rutas protegidas | Todo el código se reorganizó en 4 carpetas (`dominio`/`infraestructura`/`aplicacion`/`ui`, ver abajo). Login real contra [DummyJSON](https://dummyjson.com/docs/auth) (`infraestructura/auth.ts`), sesión con `SessionProvider` + `useSesion()` que se **cierra sola cuando el token vence** (`useEffect` + `setTimeout` + `AbortController`), persistida en `localStorage` con validación estricta de tipos (`infraestructura/almacen.ts`). `/checkout` queda protegido con `RutaProtegida` — sin sesión, redirige a `/login` y vuelve a donde estabas después de loguearte. Variables de entorno (`VITE_API_URL`) vía `.env` (no se sube — `.env.example` sí). |
-| 8 | Rendimiento + deploy | `ProductCard` envuelto en `memo`; el filtro del catálogo (`visibles`) en `useMemo`; `Login` y `Checkout` cargados con `React.lazy` + `Suspense` (no van en el bundle inicial, porque no todos los visitan). `vercel.json` listo para el deploy (falta hacerlo desde la cuenta de Vercel). |
+| 8 | Rendimiento + deploy | `ProductCard` envuelto en `memo`; el filtro del catálogo (`visibles`) en `useMemo`; `Login` y `Checkout` cargados con `React.lazy` + `Suspense` (no van en el bundle inicial, porque no todos los visitan). `vercel.json` con la regla de rewrite, y proyecto ya desplegado en Vercel: **[nivelup-tienda.vercel.app](https://nivelup-tienda.vercel.app)**. |
 
 Lo que **todavía no existe** (no se dictó en clase, o no alcanzó el tiempo): registro de
-usuario nuevo (`/registro`), recetas/otro dominio de ejemplo del profesor (no aplica, es de su
-propio proyecto demo), y el deploy en sí a Vercel (el archivo de configuración ya está, pero
-conectar la cuenta y las variables de entorno hay que hacerlo a mano desde vercel.com).
+usuario nuevo (`/registro`), y recetas/otro dominio de ejemplo del profesor (no aplica, es de su
+propio proyecto demo).
 
 **Probado en este entorno:** `tsc --noEmit` sin errores propios del código (solo ruido de
 falta de `@types/react` en el sandbox de verificación, que en tu máquina sí está instalado);
@@ -92,12 +91,12 @@ src/
 vercel.json      regla de rewrite para que las rutas de React Router no den 404 en producción
 ```
 
-## Deploy (pendiente — hay que hacerlo a mano)
+## Deploy
 
-`vercel.json` ya está listo. Para desplegar de verdad:
+Desplegado en Vercel: **https://nivelup-tienda.vercel.app**
 
-1. Entrá a [vercel.com](https://vercel.com) y logueate con tu cuenta de GitHub.
-2. "Add New" → "Project" → elegí el repo de este proyecto.
-3. Framework preset: Vite. Root directory: la carpeta de este proyecto (si el repo tiene más de una carpeta).
-4. En "Environment Variables" agregá `VITE_API_URL` = `https://dummyjson.com` (el mismo valor que tenés en tu `.env`).
-5. Deploy. Si algo falla, los errores más comunes son: rutas de import con mayúscula/minúscula distinta a como se llama el archivo de verdad (en Windows no importa, en el servidor de Vercel sí), o el "Root Directory" mal configurado.
+Se conectó el repo de GitHub directo desde Vercel (framework detectado automáticamente: Vite),
+con la variable de entorno `VITE_API_URL=https://dummyjson.com` configurada ahí mismo. El
+`vercel.json` de la raíz tiene la regla de rewrite que evita el 404 al recargar una ruta que no
+es la home (por ejemplo `/checkout`), porque React Router maneja las rutas del lado del
+cliente. Cada `git push` a `main` dispara un deploy nuevo automáticamente.
