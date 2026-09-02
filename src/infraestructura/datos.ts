@@ -2,7 +2,7 @@
 // Todavía no hay conexión a ninguna API (eso llega en la Clase 7), así que
 // por ahora la tienda arranca con este array fijo, tipado con Producto para
 // que cualquier campo que falte o esté mal escrito lo marque el compilador.
-import type { Producto } from './tipos'
+import type { Producto } from '../dominio/tipos'
 
 export const productos: Producto[] = [
   {

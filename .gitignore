@@ -21,7 +21,7 @@ dist-ssr
 *.sln
 *.sw?
 
-# Variables de entorno (se agregan a partir de la Clase 11, dejamos la
-# regla desde ahora para no olvidarla más adelante)
+# Variables de entorno (Clase 7): nunca se sube el .env real, solo
+# .env.example con nombres de variables y valores de ejemplo.
 .env
 .env.local

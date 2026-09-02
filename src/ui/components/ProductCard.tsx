@@ -1,18 +1,20 @@
-// ProductCard.tsx — Clase 2 (componente + props tipadas) y Clase 3
-// (renderizado condicional: el estado "agotado" cambia clases y el botón).
+// ProductCard.tsx — Clase 2 (componente + props tipadas), Clase 3
+// (renderizado condicional) y Clase 6 (ya no recibe `onAgregar` por props:
+// llama directo a useCarrito().agregar). Clase 8: envuelto en `memo` — como
+// el catálogo puede tener muchas tarjetas, `memo` evita re-renderizar las
+// que no cambiaron cuando algo más en la pantalla se actualiza.
+import { memo } from 'react'
 import formatearPrecio from '../formato'
-import type { Producto } from '../tipos'
+import type { Producto } from '../../dominio/tipos'
+import useCarrito from '../../aplicacion/useCarrito'
 import StockBadge from './StockBadge'
 
 interface Props {
   producto: Producto
-  // Una prop puede ser una FUNCIÓN: así es como un hijo le avisa algo al
-  // padre (acá, "agregame al carrito"), sin que el hijo sepa nada de cómo
-  // funciona el carrito — eso lo decide quien use <ProductCard>.
-  onAgregar: (producto: Producto) => void
 }
 
-export default function ProductCard({ producto, onAgregar }: Props) {
+function ProductCard({ producto }: Props) {
+  const { agregar } = useCarrito()
   const agotado = producto.stock === 0
 
   return (
@@ -33,7 +35,7 @@ export default function ProductCard({ producto, onAgregar }: Props) {
       <button
         type="button"
         className="mt-3 w-full rounded-full border border-zinc-700 px-4 py-1.5 text-sm font-medium text-zinc-100 transition hover:bg-violet-600 hover:border-violet-600 disabled:cursor-not-allowed disabled:opacity-40 disabled:hover:bg-transparent"
-        onClick={() => onAgregar(producto)}
+        onClick={() => agregar(producto)}
         disabled={agotado}
       >
         {agotado ? 'Agotado' : 'Agregar al carrito'}
@@ -41,3 +43,10 @@ export default function ProductCard({ producto, onAgregar }: Props) {
     </article>
   )
 }
+
+// OJO: `memo` compara props superficialmente (acá, si `producto` sigue
+// siendo el MISMO objeto). No evita que se vuelva a renderizar por cambios
+// de Context (useCarrito) — eso es aparte, y es intencional: si cambia el
+// carrito, cada tarjeta necesita poder reaccionar (por ejemplo, si en el
+// futuro mostramos "ya está en tu carrito").
+export default memo(ProductCard)

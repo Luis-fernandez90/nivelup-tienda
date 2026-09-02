@@ -1,20 +1,13 @@
 // CartPanel.tsx — Clase 4 ("Manejo de eventos + useState: carrito con
-// estado"). Este componente NO tiene su propio useState: recibe los ítems
-// ya calculados y avisa lo que pasa (quitar, sumar, restar, vaciar) por
-// props. El estado real vive en App — acá solo se PINTA y se avisa.
+// estado"). Desde Clase 6 ya NO recibe nada por props: lee el carrito y
+// sus acciones directo de useCarrito(). El botón "Ir a pagar" navega a
+// /checkout con <Link>.
+import { Link } from 'react-router-dom'
 import formatearPrecio from '../formato'
-import type { ItemCarrito } from '../tipos'
+import useCarrito from '../../aplicacion/useCarrito'
 
-interface Props {
-  items: ItemCarrito[]
-  onSumar: (id: number) => void
-  onRestar: (id: number) => void
-  onQuitar: (id: number) => void
-  onVaciar: () => void
-}
-
-export default function CartPanel({ items, onSumar, onRestar, onQuitar, onVaciar }: Props) {
-  const subtotal = items.reduce((suma, item) => suma + item.precio * item.cantidad, 0)
+export default function CartPanel() {
+  const { items, subtotal, sumarUno, restarUno, quitar, vaciar } = useCarrito()
 
   return (
     <section className="mb-6 rounded-xl border border-zinc-800 bg-zinc-900 p-4">
@@ -29,7 +22,7 @@ export default function CartPanel({ items, onSumar, onRestar, onQuitar, onVaciar
             <span className="flex items-center gap-2">
               <button
                 type="button"
-                onClick={() => onRestar(item.id)}
+                onClick={() => restarUno(item.id)}
                 aria-label={`Quitar una unidad de ${item.nombre}`}
                 className="rounded-full border border-zinc-700 px-2 leading-6"
               >
@@ -38,7 +31,7 @@ export default function CartPanel({ items, onSumar, onRestar, onQuitar, onVaciar
               <span>{item.cantidad}</span>
               <button
                 type="button"
-                onClick={() => onSumar(item.id)}
+                onClick={() => sumarUno(item.id)}
                 aria-label={`Agregar una unidad de ${item.nombre}`}
                 className="rounded-full border border-zinc-700 px-2 leading-6"
               >
@@ -49,7 +42,7 @@ export default function CartPanel({ items, onSumar, onRestar, onQuitar, onVaciar
               </strong>
               <button
                 type="button"
-                onClick={() => onQuitar(item.id)}
+                onClick={() => quitar(item.id)}
                 aria-label={`Quitar ${item.nombre} del carrito`}
                 className="text-zinc-500 hover:text-red-400"
               >
@@ -62,11 +55,20 @@ export default function CartPanel({ items, onSumar, onRestar, onQuitar, onVaciar
 
       {items.length > 0 && (
         <div className="mt-3 flex items-center justify-between border-t border-zinc-800 pt-3">
-          <button type="button" className="text-sm text-zinc-400 underline" onClick={onVaciar}>
+          <button type="button" className="text-sm text-zinc-400 underline" onClick={vaciar}>
             Vaciar carrito
           </button>
           <p className="font-semibold text-zinc-100">Subtotal: {formatearPrecio(subtotal)}</p>
         </div>
+      )}
+
+      {items.length > 0 && (
+        <Link
+          to="/checkout"
+          className="mt-3 block rounded-full bg-violet-600 px-4 py-2 text-center text-sm font-medium text-white hover:bg-violet-500"
+        >
+          Ir a pagar
+        </Link>
       )}
     </section>
   )
