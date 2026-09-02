@@ -26,6 +26,14 @@ export interface ItemCarrito {
 // existe (es el filtro por defecto) más las categorías reales de datos.ts.
 export type CategoriaId = 'todas' | 'teclados' | 'mouses' | 'audio' | 'sillas' | 'monitores'
 
+// ---------- Catálogo por API (Clase 6) ----------
+
+// El estado de un pedido de red: unión de literales, no un boolean
+// "cargando: true/false" — con boolean solo podés representar dos
+// situaciones, y acá necesitamos tres (cargando, listo, error) que además
+// se excluyen entre sí. El compilador no te deja escribir un cuarto valor.
+export type EstadoCarga = 'cargando' | 'listo' | 'error'
+
 // ---------- Checkout (Clase 6) ----------
 
 // Lo que pide el formulario de checkout. Es su PROPIO tipo, separado de

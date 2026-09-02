@@ -1,10 +1,21 @@
-// datos.ts — el catálogo semilla (Clase 1: "contrato + catálogo semilla").
-// Todavía no hay conexión a ninguna API (eso llega en la Clase 7), así que
-// por ahora la tienda arranca con este array fijo, tipado con Producto para
-// que cualquier campo que falte o esté mal escrito lo marque el compilador.
+// datos.ts — el catálogo (Clase 1: "contrato + catálogo semilla"; Clase 6:
+// "API + estados de carga"). El array de acá abajo sigue siendo nuestra
+// única fuente de productos — no cambiamos el catálogo en sí — pero ya NO
+// se exporta directo. Se pide con `obtenerProductos()`, que devuelve una
+// Promise: el mismo contrato que tendría un `fetch` de verdad.
+//
+// ¿Por qué simular la red en vez de pedirle los productos a una API real?
+// Porque NivelUp no tiene un backend propio que sirva "teclados NexoGear"
+// — el login sí pega contra una API real (DummyJSON, ver
+// infraestructura/auth.ts), pero un catálogo de productos gamer con nuestra
+// propia marca no existe en ningún servidor público. Así que reproducimos
+// acá el mismo mecanismo que tendría un fetch real: una Promise que tarda,
+// que puede rechazar, y que se puede cancelar con un AbortSignal — para que
+// el resto de la app (Home, Detalle) esté escrito exactamente como si
+// estuviera hablando con un servidor.
 import type { Producto } from '../dominio/tipos'
 
-export const productos: Producto[] = [
+const productos: Producto[] = [
   {
     id: 1,
     nombre: 'Teclado mecánico Vortex TKL',
@@ -78,3 +89,39 @@ export const productos: Producto[] = [
     categoria: 'audio',
   },
 ]
+
+const RETARDO_MS = 700
+
+// Truco para poder MOSTRAR el estado de error en la sustentación sin
+// depender de desconectar el wifi: agregando `?fallar=1` al final de la
+// URL forzamos el rechazo. Sin ese parámetro, se comporta como una carga
+// normal — así que nunca aparece por accidente para un usuario real.
+function debeSimularFallo(): boolean {
+  return new URLSearchParams(window.location.search).get('fallar') === '1'
+}
+
+export function obtenerProductos(signal?: AbortSignal): Promise<Producto[]> {
+  return new Promise((resolve, reject) => {
+    const espera = setTimeout(() => {
+      if (debeSimularFallo()) {
+        reject(new Error('No se pudo conectar con el servidor de productos.'))
+        return
+      }
+      resolve(productos)
+    }, RETARDO_MS)
+
+    // Si algo cancela el pedido (el componente se desmonta, o pedimos de
+    // nuevo antes de que termine el anterior), no seguimos esperando ni
+    // resolvemos con datos que ya nadie quiere.
+    signal?.addEventListener('abort', () => {
+      clearTimeout(espera)
+      reject(new DOMException('Solicitud cancelada', 'AbortError'))
+    })
+  })
+}
+
+// Para la página de detalle (/producto/:id): mismo mecanismo, filtrado a
+// un solo producto. `undefined` si el id no existe en el catálogo.
+export function obtenerProductoPorId(id: number, signal?: AbortSignal): Promise<Producto | undefined> {
+  return obtenerProductos(signal).then((lista) => lista.find((p) => p.id === id))
+}

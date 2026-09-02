@@ -4,6 +4,7 @@
 // el catálogo puede tener muchas tarjetas, `memo` evita re-renderizar las
 // que no cambiaron cuando algo más en la pantalla se actualiza.
 import { memo } from 'react'
+import { Link } from 'react-router-dom'
 import formatearPrecio from '../formato'
 import type { Producto } from '../../dominio/tipos'
 import useCarrito from '../../aplicacion/useCarrito'
@@ -23,13 +24,17 @@ function ProductCard({ producto }: Props) {
         agotado ? 'opacity-50' : 'hover:border-violet-500'
       }`}
     >
-      <img
-        src={producto.imagen}
-        alt={producto.nombre}
-        className="mb-3 aspect-square w-full rounded-lg object-cover"
-      />
-      <p className="text-xs uppercase tracking-wide text-zinc-500">{producto.marca}</p>
-      <h2 className="font-semibold text-zinc-100">{producto.nombre}</h2>
+      {/* Clase 6: cada tarjeta enlaza a su propia URL (/producto/:id) —
+          la página de detalle, no solo un estado en memoria. */}
+      <Link to={`/producto/${producto.id}`}>
+        <img
+          src={producto.imagen}
+          alt={producto.nombre}
+          className="mb-3 aspect-square w-full rounded-lg object-cover"
+        />
+        <p className="text-xs uppercase tracking-wide text-zinc-500">{producto.marca}</p>
+        <h2 className="font-semibold text-zinc-100 hover:text-violet-400">{producto.nombre}</h2>
+      </Link>
       <StockBadge stock={producto.stock} />
       <p className="mt-2 text-lg font-bold text-violet-400">{formatearPrecio(producto.precio)}</p>
       <button

@@ -12,6 +12,8 @@ import { Routes, Route } from 'react-router-dom'
 import Layout from './ui/components/Layout'
 import RutaProtegida from './ui/components/RutaProtegida'
 import Home from './ui/pages/Home'
+import Detalle from './ui/pages/Detalle'
+import NoEncontrada from './ui/pages/NoEncontrada'
 
 const Checkout = lazy(() => import('./ui/pages/Checkout'))
 const Login = lazy(() => import('./ui/pages/Login'))
@@ -25,6 +27,7 @@ export default function App() {
     <Routes>
       <Route element={<Layout />}>
         <Route index element={<Home />} />
+        <Route path="producto/:id" element={<Detalle />} />
         <Route
           path="login"
           element={
@@ -43,6 +46,10 @@ export default function App() {
             }
           />
         </Route>
+        {/* Comodín: SIEMPRE al final. React Router prueba las rutas en
+            orden y usa la primera que calza — si esta fuera la primera,
+            "ganaría" antes que cualquier otra ruta. */}
+        <Route path="*" element={<NoEncontrada />} />
       </Route>
     </Routes>
   )

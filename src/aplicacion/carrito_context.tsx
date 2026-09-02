@@ -5,9 +5,10 @@
 // termina recibiendo solo para pasarlo más abajo. Context resuelve esto:
 // cualquier componente que lo necesite lo lee directo con useCarrito() (el
 // hook de al lado), sin que nadie en el medio tenga que saber que existe.
-import { createContext, useState, type ReactNode } from 'react'
+import { createContext, useEffect, useState, type ReactNode } from 'react'
 import type { ItemCarrito, Producto } from '../dominio/tipos'
 import { agregarItem, cambiarCantidad, quitarItem, resumenCarrito } from '../dominio/carrito'
+import { guardarCarrito, leerCarrito } from '../infraestructura/carrito_almacen'
 
 export interface ValorCarrito {
   items: ItemCarrito[]
@@ -27,7 +28,18 @@ export interface ValorCarrito {
 export const CarritoContext = createContext<ValorCarrito | null>(null)
 
 export function CarritoProvider({ children }: { children: ReactNode }) {
-  const [items, setItems] = useState<ItemCarrito[]>([])
+  // El inicializador de useState es una FUNCIÓN (no `leerCarrito()` directo)
+  // a propósito: así solo se lee el localStorage una vez, en el primer
+  // render, y no en cada render que haga este componente.
+  const [items, setItems] = useState<ItemCarrito[]>(() => leerCarrito())
+
+  // Mundo de afuera = localStorage, así que va en un useEffect, nunca
+  // directo en el render. Corre después de cada render en el que `items`
+  // cambió (es la única dependencia) y guarda una copia fresca. Si guardar
+  // falla, `guardarCarrito` ya se encarga de no romper nada.
+  useEffect(() => {
+    guardarCarrito(items)
+  }, [items])
 
   // Las mismas funciones puras de carrito.ts (Clase 4), ahora llamadas
   // desde acá en vez de desde App: la LÓGICA no cambió, solo se mudó DÓNDE
