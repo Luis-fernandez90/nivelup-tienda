@@ -8,7 +8,7 @@ import formatearPrecio from '../formato'
 import useCarrito from '../../aplicacion/useCarrito'
 
 export default function CartPanel() {
-  const { items, subtotal, sumarUno, restarUno, quitar, vaciar } = useCarrito()
+  const { items, subtotal, sumarUno, restarUno, quitar, vaciar, deshacer } = useCarrito()
 const tituloRef = useRef<HTMLHeadingElement>(null)
 useEffect(() => {
   tituloRef.current?.focus()
@@ -58,13 +58,18 @@ useEffect(() => {
       </ul>
 
       {items.length > 0 && (
-        <div className="mt-3 flex items-center justify-between border-t border-zinc-800 pt-3">
-          <button type="button" className="text-sm text-zinc-400 underline" onClick={vaciar}>
-            Vaciar carrito
-          </button>
-          <p className="font-semibold text-zinc-100">Subtotal: {formatearPrecio(subtotal)}</p>
-        </div>
-      )}
+  <div className="mt-3 flex items-center justify-between border-t border-zinc-800 pt-3">
+    <div className="flex gap-3">
+      <button type="button" className="text-sm text-zinc-400 underline" onClick={vaciar}>
+        Vaciar carrito
+      </button>
+      <button type="button" className="text-sm text-violet-400 underline" onClick={deshacer}>
+        Deshacer
+      </button>
+    </div>
+    <p className="font-semibold text-zinc-100">Subtotal: {formatearPrecio(subtotal)}</p>
+  </div>
+)}
 
       {items.length > 0 && (
         <Link

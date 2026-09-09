@@ -5,7 +5,7 @@
 // termina recibiendo solo para pasarlo más abajo. Context resuelve esto:
 // cualquier componente que lo necesite lo lee directo con useCarrito() (el
 // hook de al lado), sin que nadie en el medio tenga que saber que existe.
-import { createContext, useEffect, useReducer, type ReactNode } from 'react'
+import { createContext, useEffect, useReducer, useRef, type ReactNode } from 'react'
 import type { ItemCarrito, Producto } from '../dominio/tipos'
 import { agregarItem, cambiarCantidad, quitarItem, resumenCarrito } from '../dominio/carrito'
 import { guardarCarrito, leerCarrito } from '../infraestructura/carrito_almacen'
@@ -19,10 +19,12 @@ export interface ValorCarrito {
   restarUno: (id: number) => void
   quitar: (id: number) => void
   vaciar: () => void
+  deshacer: () => void
 }type AccionCarrito =
   | { tipo: 'agregar'; producto: Producto }
   | { tipo: 'sumar' | 'restar' | 'quitar'; id: number }
   | { tipo: 'vaciar' }
+  | { tipo: 'restaurar'; anterior: ItemCarrito[] }
 
 function carritoReducer(items: ItemCarrito[], accion: AccionCarrito): ItemCarrito[] {
   switch (accion.tipo) {
@@ -36,6 +38,8 @@ function carritoReducer(items: ItemCarrito[], accion: AccionCarrito): ItemCarrit
       return quitarItem(items, accion.id)
     case 'vaciar':
       return []
+    case 'restaurar':
+  return accion.anterior
   }
 }
 
@@ -50,6 +54,7 @@ export function CarritoProvider({ children }: { children: ReactNode }) {
   // a propósito: así solo se lee el localStorage una vez, en el primer
   // render, y no en cada render que haga este componente.
   const [items, dispatch] = useReducer(carritoReducer, undefined, leerCarrito)
+  const anteriorRef = useRef<ItemCarrito[] | null>(null)
 
   // Mundo de afuera = localStorage, así que va en un useEffect, nunca
   // directo en el render. Corre después de cada render en el que `items`
@@ -63,25 +68,34 @@ export function CarritoProvider({ children }: { children: ReactNode }) {
   // desde acá en vez de desde App: la LÓGICA no cambió, solo se mudó DÓNDE
   // vive el estado.
   function agregar(producto: Producto) {
+    anteriorRef.current = items
     dispatch({ tipo: 'agregar', producto })
   }
   function sumarUno(id: number) {
+    anteriorRef.current = items
    dispatch({ tipo: 'sumar', id })
   }
   function restarUno(id: number) {
+    anteriorRef.current = items
   dispatch({ tipo: 'restar', id })
 }
 function quitar(id: number) {
+  anteriorRef.current = items
   dispatch({ tipo: 'quitar', id })
 }
 function vaciar() {
+  anteriorRef.current = items
   dispatch({ tipo: 'vaciar' })
 }
-
+function deshacer() {
+  if (anteriorRef.current) {
+    dispatch({ tipo: 'restaurar', anterior: anteriorRef.current })
+  }
+}
   const { unidades, subtotal } = resumenCarrito(items)
 
   return (
-    <CarritoContext.Provider value={{ items, unidades, subtotal, agregar, sumarUno, restarUno, quitar, vaciar }}>
+    <CarritoContext.Provider value={{ items, unidades, subtotal, agregar, sumarUno, restarUno, quitar, vaciar, deshacer }}>
       {children}
     </CarritoContext.Provider>
   )
