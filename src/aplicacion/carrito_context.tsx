@@ -5,7 +5,7 @@
 // termina recibiendo solo para pasarlo más abajo. Context resuelve esto:
 // cualquier componente que lo necesite lo lee directo con useCarrito() (el
 // hook de al lado), sin que nadie en el medio tenga que saber que existe.
-import { createContext, useEffect, useState, type ReactNode } from 'react'
+import { createContext, useEffect, useReducer, type ReactNode } from 'react'
 import type { ItemCarrito, Producto } from '../dominio/tipos'
 import { agregarItem, cambiarCantidad, quitarItem, resumenCarrito } from '../dominio/carrito'
 import { guardarCarrito, leerCarrito } from '../infraestructura/carrito_almacen'
@@ -19,6 +19,24 @@ export interface ValorCarrito {
   restarUno: (id: number) => void
   quitar: (id: number) => void
   vaciar: () => void
+}type AccionCarrito =
+  | { tipo: 'agregar'; producto: Producto }
+  | { tipo: 'sumar' | 'restar' | 'quitar'; id: number }
+  | { tipo: 'vaciar' }
+
+function carritoReducer(items: ItemCarrito[], accion: AccionCarrito): ItemCarrito[] {
+  switch (accion.tipo) {
+    case 'agregar':
+      return agregarItem(items, accion.producto)
+    case 'sumar':
+      return cambiarCantidad(items, accion.id, 1)
+    case 'restar':
+      return cambiarCantidad(items, accion.id, -1)
+    case 'quitar':
+      return quitarItem(items, accion.id)
+    case 'vaciar':
+      return []
+  }
 }
 
 // OJO: el valor por defecto es `null`, no un objeto "vacío" inventado. Así,
@@ -31,7 +49,7 @@ export function CarritoProvider({ children }: { children: ReactNode }) {
   // El inicializador de useState es una FUNCIÓN (no `leerCarrito()` directo)
   // a propósito: así solo se lee el localStorage una vez, en el primer
   // render, y no en cada render que haga este componente.
-  const [items, setItems] = useState<ItemCarrito[]>(() => leerCarrito())
+  const [items, dispatch] = useReducer(carritoReducer, undefined, leerCarrito)
 
   // Mundo de afuera = localStorage, así que va en un useEffect, nunca
   // directo en el render. Corre después de cada render en el que `items`
@@ -45,20 +63,20 @@ export function CarritoProvider({ children }: { children: ReactNode }) {
   // desde acá en vez de desde App: la LÓGICA no cambió, solo se mudó DÓNDE
   // vive el estado.
   function agregar(producto: Producto) {
-    setItems(agregarItem(items, producto))
+    dispatch({ tipo: 'agregar', producto })
   }
   function sumarUno(id: number) {
-    setItems(cambiarCantidad(items, id, 1))
+   dispatch({ tipo: 'sumar', id })
   }
   function restarUno(id: number) {
-    setItems(cambiarCantidad(items, id, -1))
-  }
-  function quitar(id: number) {
-    setItems(quitarItem(items, id))
-  }
-  function vaciar() {
-    setItems([])
-  }
+  dispatch({ tipo: 'restar', id })
+}
+function quitar(id: number) {
+  dispatch({ tipo: 'quitar', id })
+}
+function vaciar() {
+  dispatch({ tipo: 'vaciar' })
+}
 
   const { unidades, subtotal } = resumenCarrito(items)
 

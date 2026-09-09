@@ -3,15 +3,19 @@
 // sus acciones directo de useCarrito(). El botón "Ir a pagar" navega a
 // /checkout con <Link>.
 import { Link } from 'react-router-dom'
+import { useEffect, useRef } from 'react'
 import formatearPrecio from '../formato'
 import useCarrito from '../../aplicacion/useCarrito'
 
 export default function CartPanel() {
   const { items, subtotal, sumarUno, restarUno, quitar, vaciar } = useCarrito()
-
+const tituloRef = useRef<HTMLHeadingElement>(null)
+useEffect(() => {
+  tituloRef.current?.focus()
+}, [])
   return (
     <section className="mb-6 rounded-xl border border-zinc-800 bg-zinc-900 p-4">
-      <h2 className="mb-2 font-semibold text-zinc-100">Tu carrito</h2>
+      <h2 ref={tituloRef} tabIndex={-1} className="mb-2 font-semibold text-zinc-100">Tu carrito</h2>
 
       {items.length === 0 && <p className="text-sm text-zinc-500">Tu carrito está vacío.</p>}
 

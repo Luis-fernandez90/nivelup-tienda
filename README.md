@@ -100,3 +100,8 @@ con la variable de entorno `VITE_API_URL=https://dummyjson.com` configurada ahí
 `vercel.json` de la raíz tiene la regla de rewrite que evita el 404 al recargar una ruta que no
 es la home (por ejemplo `/checkout`), porque React Router maneja las rutas del lado del
 cliente. Cada `git push` a `main` dispara un deploy nuevo automáticamente.
+## Ejercicios extra (useReducer + accesibilidad)
+
+Sobre el reducer (carrito y filtros): antes, cada dato se guardaba y se cambiaba por su cuenta, cada uno en su propio lugar. Ahora hay un solo punto que recibe el pedido y decide qué hacer con él. Es como tener un solo encargado atendiendo todos los pedidos, en vez de que cada uno se resuelva por separado — así es más fácil saber qué pasó y no se pisan los cambios entre sí.
+
+Sobre el foco automático del carrito: pensé en alguien que navega la página solo con el teclado, sin mouse, o con un lector de pantalla. Antes, si abría el carrito, no había ninguna señal de que algo nuevo apareció. Ahora, apenas se abre, la atención salta directo al título "Tu carrito" — como avisarle "mira, esto se acaba de abrir". Es una mejora de accesibilidad.

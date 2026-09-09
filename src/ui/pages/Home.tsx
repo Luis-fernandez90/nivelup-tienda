@@ -14,16 +14,34 @@
 // CADA render (incluidos los que no tienen nada que ver con el filtro,
 // como abrir/cerrar el carrito) — con useMemo solo se vuelve a calcular
 // si `productos`, `categoriaActiva` o `termino` cambiaron de verdad.
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useReducer, useState } from 'react'
 import ProductCard from '../components/ProductCard'
 import CartPanel from '../components/CartPanel'
 import { obtenerProductos } from '../../infraestructura/datos'
 import type { EstadoCarga, Producto } from '../../dominio/tipos'
+interface EstadoFiltro {
+  categoriaActiva: string
+  termino: string
+  carritoAbierto: boolean
+}
 
+type AccionFiltro =
+  | { tipo: 'categoria'; valor: string }
+  | { tipo: 'buscar'; valor: string }
+  | { tipo: 'alternarCarrito' }
+
+function filtroReducer(estado: EstadoFiltro, accion: AccionFiltro): EstadoFiltro {
+  switch (accion.tipo) {
+    case 'categoria':
+      return { ...estado, categoriaActiva: accion.valor }
+    case 'buscar':
+      return { ...estado, termino: accion.valor }
+    case 'alternarCarrito':
+      return { ...estado, carritoAbierto: !estado.carritoAbierto }
+  }
+}
 export default function Home() {
-  const [carritoAbierto, setCarritoAbierto] = useState(false)
-  const [categoriaActiva, setCategoriaActiva] = useState('todas')
-  const [termino, setTermino] = useState('')
+const [filtro, dispatch] = useReducer(filtroReducer, { categoriaActiva: 'todas', termino: '', carritoAbierto: false })
 
   const [productos, setProductos] = useState<Producto[]>([])
   const [estado, setEstado] = useState<EstadoCarga>('cargando')
@@ -62,15 +80,15 @@ export default function Home() {
 
   const categorias = useMemo(() => ['todas', ...new Set(productos.map((p) => p.categoria))], [productos])
 
-  const busqueda = termino.trim().toLowerCase()
+  const busqueda = filtro.termino.trim().toLowerCase()
   const visibles = useMemo(() => {
     return productos.filter((p) => {
-      const pasaCategoria = categoriaActiva === 'todas' || p.categoria === categoriaActiva
+      const pasaCategoria = filtro.categoriaActiva === 'todas' || p.categoria === filtro.categoriaActiva
       const pasaBusqueda =
         busqueda === '' || p.nombre.toLowerCase().includes(busqueda) || p.marca.toLowerCase().includes(busqueda)
       return pasaCategoria && pasaBusqueda
     })
-  }, [productos, categoriaActiva, busqueda])
+  }, [productos, filtro.categoriaActiva, busqueda])
 
   if (estado === 'cargando') {
     return <p className="text-zinc-500">Cargando catálogo…</p>
@@ -96,22 +114,22 @@ export default function Home() {
       <button
         type="button"
         className="mb-4 text-sm text-violet-400 underline"
-        onClick={() => setCarritoAbierto(!carritoAbierto)}
+        onClick={() => dispatch({ tipo: 'alternarCarrito' })}
       >
-        {carritoAbierto ? 'Ocultar carrito' : 'Ver carrito'}
+        {filtro.carritoAbierto ? 'Ocultar carrito' : 'Ver carrito'}
       </button>
 
       {/* CartPanel ya no recibe props (Clase 6): lee el carrito directo del Context. */}
-      {carritoAbierto && <CartPanel />}
+      {filtro.carritoAbierto && <CartPanel />}
 
       <nav className="mb-4 flex flex-wrap gap-2" aria-label="Filtrar por categoría">
         {categorias.map((categoria) => (
           <button
             key={categoria}
             type="button"
-            onClick={() => setCategoriaActiva(categoria)}
+            onClick={() => dispatch({ tipo: 'categoria', valor: categoria })}
             className={`rounded-full border px-3 py-1 text-sm capitalize transition ${
-              categoria === categoriaActiva
+              categoria === filtro.categoriaActiva
                 ? 'border-violet-500 bg-violet-600 text-white'
                 : 'border-zinc-700 text-zinc-300 hover:border-zinc-500'
             }`}
@@ -124,8 +142,8 @@ export default function Home() {
       <input
         type="search"
         placeholder="Buscar por nombre o marca…"
-        value={termino}
-        onChange={(evento) => setTermino(evento.target.value)}
+        value={filtro.termino}
+        onChange={(evento) => dispatch({ tipo: 'buscar', valor: evento.target.value })}
         className="mb-6 w-72 rounded-lg border border-zinc-700 bg-zinc-900 px-3 py-2 text-sm text-zinc-100 placeholder:text-zinc-500"
         aria-label="Buscar productos"
       />
@@ -133,7 +151,7 @@ export default function Home() {
       {visibles.length === 0 ? (
         <p className="text-zinc-500">
           {busqueda !== ''
-            ? `No encontramos nada para "${termino.trim()}".`
+            ? `No encontramos nada para "${filtro.termino.trim()}".`
             : 'No hay productos en esta categoría.'}
         </p>
       ) : (
