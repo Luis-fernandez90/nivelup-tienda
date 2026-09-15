@@ -92,10 +92,7 @@ const productos: Producto[] = [
 
 const RETARDO_MS = 700
 
-// Truco para poder MOSTRAR el estado de error en la sustentación sin
-// depender de desconectar el wifi: agregando `?fallar=1` al final de la
-// URL forzamos el rechazo. Sin ese parámetro, se comporta como una carga
-// normal — así que nunca aparece por accidente para un usuario real.
+// Si la URL tiene ?fallar=1, simula que la carga del catálogo falla
 function debeSimularFallo(): boolean {
   return new URLSearchParams(window.location.search).get('fallar') === '1'
 }

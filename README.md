@@ -24,16 +24,7 @@ construido:
 | 8 | Rendimiento + deploy | `ProductCard` envuelto en `memo`; el filtro del catálogo (`visibles`) en `useMemo`; `Login` y `Checkout` cargados con `React.lazy` + `Suspense` (no van en el bundle inicial, porque no todos los visitan). `vercel.json` con la regla de rewrite, y proyecto ya desplegado en Vercel: **[nivelup-tienda.vercel.app](https://nivelup-tienda.vercel.app)**. |
 
 Lo que **todavía no existe** (no se dictó en clase, o no alcanzó el tiempo): registro de
-usuario nuevo (`/registro`), y recetas/otro dominio de ejemplo del profesor (no aplica, es de su
-propio proyecto demo).
-
-**Probado en este entorno:** `tsc --noEmit` sin errores propios del código (solo ruido de
-falta de `@types/react` en el sandbox de verificación, que en tu máquina sí está instalado);
-render de `Home`, `Header`, `Login`, `CartPanel`, `Checkout` con datos reales; la lógica de
-`validar()` del checkout y la de expiración de sesión, probadas con casos concretos. **Lo que
-NO se pudo probar acá** (porque este entorno no tiene acceso a internet ni puede correr Vite
-de verdad): el login contra DummyJSON en un navegador real, y el ciclo completo de expiración
-de sesión en vivo. Probalo vos con `npm run dev` antes de la sustentación.
+usuario nuevo (`/registro`)
 
 ## Cómo correrlo
 
@@ -46,7 +37,7 @@ npm run dev
 ```
 
 Abre la URL que te muestre la terminal (normalmente `http://localhost:5173`). Para loguearte,
-usá el usuario de prueba de DummyJSON: `emilys` / `emilyspass`.
+usa el usuario de prueba de DummyJSON: `emilys` / `emilyspass`.
 
 ## Estructura (arquitectura hexagonal, desde Clase 7)
 
