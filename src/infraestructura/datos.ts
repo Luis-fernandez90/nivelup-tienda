@@ -1,18 +1,7 @@
-// datos.ts — el catálogo (Clase 1: "contrato + catálogo semilla"; Clase 6:
-// "API + estados de carga"). El array de acá abajo sigue siendo nuestra
-// única fuente de productos — no cambiamos el catálogo en sí — pero ya NO
-// se exporta directo. Se pide con `obtenerProductos()`, que devuelve una
-// Promise: el mismo contrato que tendría un `fetch` de verdad.
-//
-// ¿Por qué simular la red en vez de pedirle los productos a una API real?
-// Porque NivelUp no tiene un backend propio que sirva "teclados NexoGear"
-// — el login sí pega contra una API real (DummyJSON, ver
-// infraestructura/auth.ts), pero un catálogo de productos gamer con nuestra
-// propia marca no existe en ningún servidor público. Así que reproducimos
-// acá el mismo mecanismo que tendría un fetch real: una Promise que tarda,
-// que puede rechazar, y que se puede cancelar con un AbortSignal — para que
-// el resto de la app (Home, Detalle) esté escrito exactamente como si
-// estuviera hablando con un servidor.
+// Productos del catálogo. No existe una API pública de productos gamer
+// con nuestra marca, así que simulamos la carga con una Promise (con
+// demora y posibilidad de fallo) como si fuera un fetch real.
+
 import type { Producto } from '../dominio/tipos'
 
 const productos: Producto[] = [
@@ -107,9 +96,7 @@ export function obtenerProductos(signal?: AbortSignal): Promise<Producto[]> {
       resolve(productos)
     }, RETARDO_MS)
 
-    // Si algo cancela el pedido (el componente se desmonta, o pedimos de
-    // nuevo antes de que termine el anterior), no seguimos esperando ni
-    // resolvemos con datos que ya nadie quiere.
+   // Si se cancela la petición, dejamos de esperar.
     signal?.addEventListener('abort', () => {
       clearTimeout(espera)
       reject(new DOMException('Solicitud cancelada', 'AbortError'))
@@ -117,8 +104,7 @@ export function obtenerProductos(signal?: AbortSignal): Promise<Producto[]> {
   })
 }
 
-// Para la página de detalle (/producto/:id): mismo mecanismo, filtrado a
-// un solo producto. `undefined` si el id no existe en el catálogo.
+// Busca un producto por id para la página de detalle.
 export function obtenerProductoPorId(id: number, signal?: AbortSignal): Promise<Producto | undefined> {
   return obtenerProductos(signal).then((lista) => lista.find((p) => p.id === id))
 }
