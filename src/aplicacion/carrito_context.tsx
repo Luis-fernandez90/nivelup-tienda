@@ -1,10 +1,5 @@
-// carrito_context.tsx — Clase 6 ("Context API"). Hasta acá, `carrito` vivía
-// como useState en App, y bajaba a los demás componentes por props (Header,
-// CartPanel, ProductCard...). A medida que la tienda crece, ese "prop
-// drilling" se vuelve incómodo: un componente que ni usa el carrito lo
-// termina recibiendo solo para pasarlo más abajo. Context resuelve esto:
-// cualquier componente que lo necesite lo lee directo con useCarrito() (el
-// hook de al lado), sin que nadie en el medio tenga que saber que existe.
+// Contexto del carrito: cualquier componente que lo necesite lo lee con
+// useCarrito(), sin tener que pasarlo por props desde App.
 import { createContext, useEffect, useReducer, useRef, type ReactNode } from 'react'
 import type { ItemCarrito, Producto } from '../dominio/tipos'
 import { agregarItem, cambiarCantidad, quitarItem, resumenCarrito } from '../dominio/carrito'
@@ -43,30 +38,22 @@ function carritoReducer(items: ItemCarrito[], accion: AccionCarrito): ItemCarrit
   }
 }
 
-// OJO: el valor por defecto es `null`, no un objeto "vacío" inventado. Así,
-// si algún componente llega a usar useCarrito() SIN estar envuelto en el
-// Provider, el hook lo puede detectar y avisar con un error claro, en vez
-// de fallar en silencio con datos falsos.
+// Valor por defecto null para detectar si se usa useCarrito() fuera del Provider.
 export const CarritoContext = createContext<ValorCarrito | null>(null)
 
 export function CarritoProvider({ children }: { children: ReactNode }) {
-  // El inicializador de useState es una FUNCIÓN (no `leerCarrito()` directo)
-  // a propósito: así solo se lee el localStorage una vez, en el primer
-  // render, y no en cada render que haga este componente.
+  // Pasamos leerCarrito como función (no leerCarrito()) para que solo se
+// lea el localStorage una vez, en el primer render.
   const [items, dispatch] = useReducer(carritoReducer, undefined, leerCarrito)
   const anteriorRef = useRef<ItemCarrito[] | null>(null)
 
-  // Mundo de afuera = localStorage, así que va en un useEffect, nunca
-  // directo en el render. Corre después de cada render en el que `items`
-  // cambió (es la única dependencia) y guarda una copia fresca. Si guardar
-  // falla, `guardarCarrito` ya se encarga de no romper nada.
+  // Guarda el carrito en localStorage cada vez que cambian los items.
   useEffect(() => {
     guardarCarrito(items)
   }, [items])
 
-  // Las mismas funciones puras de carrito.ts (Clase 4), ahora llamadas
-  // desde acá en vez de desde App: la LÓGICA no cambió, solo se mudó DÓNDE
-  // vive el estado.
+  // Cada función guarda el estado anterior en anteriorRef antes de cambiar
+// el carrito, para poder deshacer con deshacer().
   function agregar(producto: Producto) {
     anteriorRef.current = items
     dispatch({ tipo: 'agregar', producto })

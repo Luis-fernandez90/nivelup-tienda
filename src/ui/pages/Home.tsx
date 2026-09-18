@@ -1,19 +1,7 @@
-// Home.tsx — Clase 6 (React Router): el catálogo, los filtros, el
-// buscador y el panel del carrito. App ya no es "la pantalla", es el que
-// arma las RUTAS; cada ruta es una pantalla distinta (Home, Detalle,
-// Checkout, Login...), y todas comparten Header/Footer a través de
-// <Layout>.
-//
-// Clase 6 (API + estados de carga): el catálogo ya no se importa como un
-// array fijo — se PIDE con obtenerProductos(), que devuelve una Promise.
-// Eso significa que hay un momento en que todavía no llegó (cargando), uno
-// en que llegó bien (listo) y uno en que algo salió mal (error). Los tres
-// estados se muestran, nunca se ignoran.
-//
-// Clase 8: `visibles` se envuelve en `useMemo`. Antes se recalculaba en
-// CADA render (incluidos los que no tienen nada que ver con el filtro,
-// como abrir/cerrar el carrito) — con useMemo solo se vuelve a calcular
-// si `productos`, `categoriaActiva` o `termino` cambiaron de verdad.
+// Home.tsx — catálogo con filtros, buscador y panel de carrito. Los
+// productos se piden con obtenerProductos() (Promise), así que hay estados
+// de carga, listo y error. `visibles` usa useMemo para no recalcular el
+// filtro en cada render.
 import { useEffect, useMemo, useReducer, useState } from 'react'
 import ProductCard from '../components/ProductCard'
 import CartPanel from '../components/CartPanel'
@@ -45,14 +33,10 @@ const [filtro, dispatch] = useReducer(filtroReducer, { categoriaActiva: 'todas',
 
   const [productos, setProductos] = useState<Producto[]>([])
   const [estado, setEstado] = useState<EstadoCarga>('cargando')
-  // No representa nada del pedido en sí — es un truco para el botón
-  // "Reintentar": cambiarlo no hace nada por sí solo, pero como está en
-  // las dependencias del useEffect, cambiarlo hace que el efecto vuelva a
-  // correr y pida el catálogo de nuevo.
+  // Cambiar este número fuerza a que el useEffect vuelva a pedir el catálogo.
   const [intentos, setIntentos] = useState(0)
 
-  // Pedir productos es "mundo de afuera" (red), igual que el localStorage
-  // de Clase 6: nunca va directo en el render, va en un useEffect.
+  // Pedir productos va en un useEffect, no directo en el render.
   useEffect(() => {
     const controlador = new AbortController()
     setEstado('cargando')
@@ -63,18 +47,12 @@ const [filtro, dispatch] = useReducer(filtroReducer, { categoriaActiva: 'todas',
         setEstado('listo')
       })
       .catch((error) => {
-        // AbortError no es un error real del pedido — es que NOSOTROS lo
-        // cancelamos (ver el cleanup, abajo). Si lo tratáramos como error,
-        // el usuario vería "algo salió mal" cada vez que este efecto se
-        // reinicia sin que haya pasado nada malo.
+        // Si cancelamos nosotros el pedido (AbortError), no lo tratamos como error.
         if (error instanceof DOMException && error.name === 'AbortError') return
         setEstado('error')
       })
 
-    // Limpieza: si el componente se desmonta, o el efecto vuelve a correr
-    // (por ejemplo, apretaste "Reintentar" dos veces seguido) antes de que
-    // el pedido anterior responda, lo cancelamos. Sin esto, un pedido
-    // viejo podría "ganarle" al nuevo y pisar datos más frescos.
+    // Cancela el pedido si el componente se desmonta o se pide de nuevo.
     return () => controlador.abort()
   }, [intentos])
 
@@ -119,7 +97,7 @@ const [filtro, dispatch] = useReducer(filtroReducer, { categoriaActiva: 'todas',
         {filtro.carritoAbierto ? 'Ocultar carrito' : 'Ver carrito'}
       </button>
 
-      {/* CartPanel ya no recibe props (Clase 6): lee el carrito directo del Context. */}
+      {/* CartPanel lee el carrito directo del Context. */}
       {filtro.carritoAbierto && <CartPanel />}
 
       <nav className="mb-4 flex flex-wrap gap-2" aria-label="Filtrar por categoría">
@@ -157,7 +135,7 @@ const [filtro, dispatch] = useReducer(filtroReducer, { categoriaActiva: 'todas',
       ) : (
         <section className="flex flex-wrap gap-4">
           {visibles.map((producto) => (
-            // ProductCard ya no recibe onAgregar (Clase 6): usa useCarrito() directo.
+            // ProductCard usa useCarrito() directo, no recibe onAgregar por props.
             <ProductCard key={producto.id} producto={producto} />
           ))}
         </section>
