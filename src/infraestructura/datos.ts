@@ -3,14 +3,21 @@
 // demora y posibilidad de fallo) como si fuera un fetch real.
 
 import type { Producto } from '../dominio/tipos'
-
+import vortexTkl from '../assets/productos/VortexTKL.jpg.jpg'
+import raptorX from '../assets/productos/RaptorX.jpg.webp'
+import echoPulse from '../assets/productos/EchoPulse7.1.jpg.webp'
+import thronePro from '../assets/productos/ThronePro.jpg.png'
+import viewArc from '../assets/productos/ViewArc27.jpg.webp'
+import glideZone from '../assets/productos/GlideZoneXL.jpg.webp'
+import nimbusMini from '../assets/productos/NimbusMini.jpg.webp'
+import voxComm from '../assets/productos/VoxComm.jpg.webp'
 const productos: Producto[] = [
   {
     id: 1,
     nombre: 'Teclado mecánico Vortex TKL',
     marca: 'NexoGear',
     precio: 349.9,
-    imagen: 'https://placehold.co/400x400/18181b/e4e4e7?text=Vortex+TKL',
+    imagen: vortexTkl,
     stock: 8,
     categoria: 'teclados',
   },
@@ -19,7 +26,7 @@ const productos: Producto[] = [
     nombre: 'Mouse inalámbrico Raptor X',
     marca: 'NexoGear',
     precio: 189.9,
-    imagen: 'https://placehold.co/400x400/18181b/e4e4e7?text=Raptor+X',
+    imagen: raptorX,
     stock: 3,
     categoria: 'mouses',
   },
@@ -28,7 +35,7 @@ const productos: Producto[] = [
     nombre: 'Audífonos gamer EchoPulse 7.1',
     marca: 'SonoLab',
     precio: 259.9,
-    imagen: 'https://placehold.co/400x400/18181b/e4e4e7?text=EchoPulse+7.1',
+    imagen: echoPulse,
     stock: 15,
     categoria: 'audio',
   },
@@ -37,7 +44,7 @@ const productos: Producto[] = [
     nombre: 'Silla ergonómica ThronePro',
     marca: 'Rugor',
     precio: 899.9,
-    imagen: 'https://placehold.co/400x400/18181b/e4e4e7?text=ThronePro',
+    imagen: thronePro,
     stock: 0,
     categoria: 'sillas',
   },
@@ -46,7 +53,7 @@ const productos: Producto[] = [
     nombre: 'Monitor curvo 27" 165Hz ViewArc',
     marca: 'Pixion',
     precio: 1299.9,
-    imagen: 'https://placehold.co/400x400/18181b/e4e4e7?text=ViewArc+27',
+    imagen: viewArc,
     stock: 4,
     categoria: 'monitores',
   },
@@ -55,7 +62,7 @@ const productos: Producto[] = [
     nombre: 'Mousepad XL RGB GlideZone',
     marca: 'NexoGear',
     precio: 79.9,
-    imagen: 'https://placehold.co/400x400/18181b/e4e4e7?text=GlideZone+XL',
+    imagen: glideZone,
     stock: 20,
     categoria: 'mouses',
   },
@@ -64,7 +71,7 @@ const productos: Producto[] = [
     nombre: 'Teclado 60% inalámbrico Nimbus Mini',
     marca: 'NexoGear',
     precio: 429.9,
-    imagen: 'https://placehold.co/400x400/18181b/e4e4e7?text=Nimbus+Mini',
+    imagen: nimbusMini,
     stock: 6,
     categoria: 'teclados',
   },
@@ -73,7 +80,7 @@ const productos: Producto[] = [
     nombre: 'Auriculares con micrófono VoxComm',
     marca: 'SonoLab',
     precio: 149.9,
-    imagen: 'https://placehold.co/400x400/18181b/e4e4e7?text=VoxComm',
+    imagen: voxComm,
     stock: 10,
     categoria: 'audio',
   },
