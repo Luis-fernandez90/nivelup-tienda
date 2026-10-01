@@ -1,8 +1,5 @@
-// ProductCard.tsx — Clase 2 (componente + props tipadas), Clase 3
-// (renderizado condicional) y Clase 6 (ya no recibe `onAgregar` por props:
-// llama directo a useCarrito().agregar). Clase 8: envuelto en `memo` — como
-// el catálogo puede tener muchas tarjetas, `memo` evita re-renderizar las
-// que no cambiaron cuando algo más en la pantalla se actualiza.
+// Tarjeta de producto. Usa memo porque el catálogo tiene varias tarjetas
+// y no todas necesitan re-renderizarse cuando cambia algo en pantalla.
 import { memo } from 'react'
 import { Link } from 'react-router-dom'
 import formatearPrecio from '../formato'
@@ -20,12 +17,13 @@ function ProductCard({ producto }: Props) {
 
   return (
     <article
-      className={`w-64 rounded-xl border border-zinc-800 bg-zinc-900 p-4 transition ${
-        agotado ? 'opacity-50' : 'hover:border-violet-500'
+      className={`w-64 animate-fade-in-up rounded-xl border border-zinc-800 bg-zinc-900 p-4 transition duration-300 ${
+        agotado
+          ? 'opacity-50'
+          : 'hover:-translate-y-1 hover:border-violet-500 hover:shadow-lg hover:shadow-violet-500/20'
       }`}
     >
-      {/* Clase 6: cada tarjeta enlaza a su propia URL (/producto/:id) —
-          la página de detalle, no solo un estado en memoria. */}
+      {/* Enlaza a la página de detalle del producto */}
       <Link to={`/producto/${producto.id}`}>
         <img
           src={producto.imagen}
@@ -33,7 +31,9 @@ function ProductCard({ producto }: Props) {
           className="mb-3 aspect-square w-full rounded-lg object-cover"
         />
         <p className="text-xs uppercase tracking-wide text-zinc-500">{producto.marca}</p>
-        <h2 className="font-semibold text-zinc-100 hover:text-violet-400">{producto.nombre}</h2>
+        <h2 className="font-semibold text-zinc-100 transition-colors hover:text-violet-400">
+          {producto.nombre}
+        </h2>
       </Link>
       <StockBadge stock={producto.stock} />
       <p className="mt-2 text-lg font-bold text-violet-400">{formatearPrecio(producto.precio)}</p>
@@ -49,9 +49,6 @@ function ProductCard({ producto }: Props) {
   )
 }
 
-// OJO: `memo` compara props superficialmente (acá, si `producto` sigue
-// siendo el MISMO objeto). No evita que se vuelva a renderizar por cambios
-// de Context (useCarrito) — eso es aparte, y es intencional: si cambia el
-// carrito, cada tarjeta necesita poder reaccionar (por ejemplo, si en el
-// futuro mostramos "ya está en tu carrito").
+// memo compara las props (si `producto` es el mismo objeto). No evita que
+// se re-renderice por cambios del carrito, y eso es intencional.
 export default memo(ProductCard)
