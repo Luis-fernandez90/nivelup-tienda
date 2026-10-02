@@ -36,3 +36,26 @@ body {
 .animate-fade-in-up {
   animation: fade-in-up 0.4s ease-out both;
 }
+
+/* Movimiento lento de las manchas de luz del fondo */
+@keyframes glow-float {
+  0%,
+  100% {
+    transform: translate(0, 0);
+  }
+  50% {
+    transform: translate(40px, 30px);
+  }
+}
+
+.animate-glow-float {
+  animation: glow-float 10s ease-in-out infinite;
+}
+
+/* Título con las tres franjas rojo/blanco/rojo, fijas (como la bandera peruana) */
+.texto-bandera {
+  background: linear-gradient(to right, #ef4444 0%, #ef4444 33%, #ffffff 33%, #ffffff 67%, #ef4444 67%, #ef4444 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}

@@ -1,6 +1,6 @@
 // Header con el logo, la navegación, el resumen del carrito y la sesión
 // (muestra "Hola, {nombre}" + Salir, o el link para iniciar sesión).
-import { NavLink } from 'react-router-dom'
+import { Link, NavLink } from 'react-router-dom'
 import useCarrito from '../../aplicacion/useCarrito'
 import useSesion from '../../aplicacion/useSesion'
 import formatearPrecio from '../formato'
@@ -23,9 +23,27 @@ export default function Header({ nombreTienda, eslogan = 'Sube de nivel tu setup
   return (
     <header className="mb-6 flex flex-wrap items-center justify-between gap-3 border-b border-zinc-800 pb-4">
       <div>
-        <h1 className="inline-block text-2xl font-bold tracking-tight text-violet-400 transition-transform hover:scale-105">
-          {nombreTienda}
-        </h1>
+        <Link to="/" className="group inline-flex items-center gap-3">
+          <svg
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            aria-hidden="true"
+            className="h-9 w-9 text-violet-400 transition-transform duration-300 group-hover:scale-125"
+          >
+            <rect x="2" y="7" width="20" height="10" rx="5" />
+            <line x1="7" y1="10" x2="7" y2="14" />
+            <line x1="5" y1="12" x2="9" y2="12" />
+            <circle cx="15" cy="10.5" r="1" fill="currentColor" stroke="none" />
+            <circle cx="17.5" cy="13" r="1" fill="currentColor" stroke="none" />
+          </svg>
+          <h1 className="texto-bandera text-4xl font-extrabold tracking-tight transition-transform duration-300 group-hover:scale-105">
+            {nombreTienda}
+          </h1>
+        </Link>
         <p className="text-sm text-zinc-400">{eslogan}</p>
       </div>
       <nav className="flex items-center gap-4">
