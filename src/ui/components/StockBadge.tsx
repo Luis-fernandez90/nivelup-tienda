@@ -1,7 +1,5 @@
-// StockBadge.tsx — Clase 3 ("Renderizado condicional"). Un componente
-// puede devolver `null`: React simplemente no pinta nada ahí. Es la forma
-// más simple de "a veces se muestra, a veces no" — no hace falta un `if`
-// en el componente que lo usa (ProductCard), la decisión vive acá adentro.
+// Devuelve null cuando no hay que mostrar nada (sin stock, o stock
+// suficiente) — así ProductCard no necesita un if, la decisión vive acá.
 interface Props {
   stock: number
 }

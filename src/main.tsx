@@ -11,10 +11,10 @@ import { SessionProvider } from './aplicacion/session_context.tsx'
 // pasar dos veces (por eso session_context.tsx cancela con AbortController
 // y clearTimeout en su cleanup — así el doble montaje no deja fugas).
 //
-// Clase 6/7: <BrowserRouter>, <CarritoProvider> y <SessionProvider>
-// envuelven a <App/> acá, no adentro de App. Así cualquier componente del
-// árbol (incluido App) puede usar rutas, leer el carrito y leer la sesión.
-// El orden entre Carrito y Session no importa — no dependen uno del otro.
+// <BrowserRouter>, <CarritoProvider> y <SessionProvider> envuelven a <App/>
+// acá, no adentro de App. Así cualquier componente del árbol (incluido
+// App) puede usar rutas, leer el carrito y leer la sesión. El orden entre
+// Carrito y Session no importa, no dependen uno del otro.
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>

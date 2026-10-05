@@ -1,12 +1,11 @@
-// App.tsx — desde Clase 6, App ya no es "la pantalla": define las RUTAS.
-// <Layout> es el molde (Header+Outlet+Footer) que envuelve a todas.
+// App define las rutas. <Layout> es el molde (Header+Outlet+Footer) que
+// envuelve a todas.
 //
-// Clase 7: /checkout queda adentro de <RutaProtegida> — sin sesión, te
-// manda a /login. Clase 8: Login y Checkout se cargan con `lazy` (no
-// todo el mundo los visita, así que no hace falta bajarlos en el bundle
-// inicial); Home y el catálogo SÍ van directo, porque esos los ve todo el
-// mundo apenas entra. <Suspense> muestra un fallback mientras el código
-// de la página se termina de descargar.
+// /checkout queda adentro de <RutaProtegida> — sin sesión, manda a /login.
+// Login y Checkout se cargan con `lazy` (no todos los visitan, no hace
+// falta bajarlos en el bundle inicial); Home sí va directo porque eso lo
+// ve todo el mundo apenas entra. <Suspense> muestra un fallback mientras
+// se termina de descargar el código de la página.
 import { lazy, Suspense } from 'react'
 import { Routes, Route } from 'react-router-dom'
 import Layout from './ui/components/Layout'

@@ -1,11 +1,10 @@
-// Login.tsx — Clase 7. Acá SÍ van dos useState separados (no un objeto
-// como en Checkout): son solo dos campos sueltos, no un formulario grande
-// con muchos campos relacionados.
+// Acá van dos useState separados (no un objeto como en Checkout): son
+// solo dos campos sueltos, no un formulario grande con campos
+// relacionados.
 //
 // `enviando` bloquea el botón mientras la petición está en curso, para
-// que un click doble no dispare dos logins al mismo tiempo. La sesión
-// NUNCA guarda la contraseña en el estado más de lo necesario para
-// mandarla — no se persiste en ningún lado, ni siquiera acá.
+// que un doble click no dispare dos logins a la vez. La contraseña no se
+// guarda en ningún lado más allá de lo necesario para mandarla.
 import { useState, type FormEvent } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import useSesion from '../../aplicacion/useSesion'
