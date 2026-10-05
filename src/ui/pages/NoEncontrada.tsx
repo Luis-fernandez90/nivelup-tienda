@@ -1,8 +1,6 @@
-// NoEncontrada.tsx — Clase 6 (React Router): página 404 propia. Sin una
-// ruta comodín, cualquier URL que no exista (o un link roto) cae en una
-// pantalla en blanco en vez de explicarle al usuario qué pasó. Se registra
-// en App.tsx como `path="*"`, la última ruta — React Router prueba las
-// rutas en orden y usa la primera que calza.
+// Página 404 propia. Sin una ruta comodín, cualquier URL que no exista
+// (o un link roto) cae en una pantalla en blanco en vez de explicarle al
+// usuario qué pasó. Se registra en App.tsx como path="*", la última ruta.
 import { Link } from 'react-router-dom'
 
 export default function NoEncontrada() {

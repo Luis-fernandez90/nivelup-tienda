@@ -1,8 +1,7 @@
-// Detalle.tsx — Clase 6 (React Router): un producto, por su propia URL
-// (/producto/:id) — no solo un modal o un estado en memoria. Se puede
-// compartir el link, recargar la página en ella (vercel.json se encarga de
-// que eso no dé 404), y usa exactamente el mismo mecanismo de carga que
-// Home: cargando / listo / error, con reintentar.
+// Un producto, por su propia URL (/producto/:id) — no solo un modal o un
+// estado en memoria. Se puede compartir el link, recargar la página en
+// ella (vercel.json se encarga de que eso no dé 404), y usa el mismo
+// mecanismo de carga que Home: cargando / listo / error, con reintentar.
 import { useEffect, useState } from 'react'
 import { Link, useParams } from 'react-router-dom'
 import formatearPrecio from '../formato'
@@ -45,10 +44,10 @@ export default function Detalle() {
       })
 
     return () => controlador.abort()
-    // `id` entra a las dependencias a propósito: si navegás de un producto
-    // a otro (¡sin recargar la página!), React Router cambia el id pero el
-    // componente Detalle sigue siendo el mismo — sin esto, seguiría
-    // mostrando el producto anterior.
+    // `id` entra a las dependencias a propósito: si navegas de un producto a
+    // otro (¡sin recargar la página!), React Router cambia el id pero el
+    // componente Detalle sigue siendo el mismo — sin esto, seguiría mostrando
+    // el producto anterior.
   }, [id, intentos])
 
   if (estado === 'cargando') {
