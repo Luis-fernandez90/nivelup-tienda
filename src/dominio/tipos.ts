@@ -1,7 +1,6 @@
-// tipos.ts — el contrato de la tienda. La misma idea que en el proyecto de
-// TypeScript de fundamentos: la forma de un Producto se define UNA vez acá,
-// y todo lo demás (el catálogo, las tarjetas, el carrito) la importa en vez
-// de repetirla.
+// tipos.ts — el contrato de la tienda: la forma de un Producto se define
+// UNA vez acá, y todo lo demás (catálogo, tarjetas, carrito) la importa en
+// vez de repetirla.
 export interface Producto {
   id: number
   nombre: string
@@ -12,9 +11,9 @@ export interface Producto {
   categoria: string
 }
 
-// Un ítem del carrito no es un Producto completo: solo necesita lo que se
-// muestra y se calcula ahí (nombre, precio, cuántas unidades). Guardar el
-// producto entero sería arrastrar datos que el carrito nunca usa.
+// Un ítem del carrito no es un Producto completo: solo lo que se muestra y
+// se calcula ahí (nombre, precio, cantidad). Guardar el producto entero
+// sería arrastrar datos que el carrito nunca usa.
 export interface ItemCarrito {
   id: number
   nombre: string
@@ -22,23 +21,18 @@ export interface ItemCarrito {
   cantidad: number
 }
 
-// Las categorías del catálogo, como unión de literales: "todas" siempre
-// existe (es el filtro por defecto) más las categorías reales de datos.ts.
+// Las categorías del catálogo: "todas" siempre existe (filtro por
+// defecto) más las categorías reales de datos.ts.
 export type CategoriaId = 'todas' | 'teclados' | 'mouses' | 'audio' | 'sillas' | 'monitores'
 
-// ---------- Catálogo por API (Clase 6) ----------
-
-// El estado de un pedido de red: unión de literales, no un boolean
-// "cargando: true/false" — con boolean solo podés representar dos
-// situaciones, y acá necesitamos tres (cargando, listo, error) que además
-// se excluyen entre sí. El compilador no te deja escribir un cuarto valor.
+// Estado de un pedido de red: unión de literales en vez de un boolean
+// "cargando: true/false", porque acá hay tres estados posibles (cargando,
+// listo, error) y se excluyen entre sí.
 export type EstadoCarga = 'cargando' | 'listo' | 'error'
 
-// ---------- Checkout (Clase 6) ----------
-
-// Lo que pide el formulario de checkout. Es su PROPIO tipo, separado de
-// Producto e ItemCarrito, porque describe otra cosa: no un producto, sino
-// a la persona que compra.
+// Lo que pide el formulario de checkout. Tipo separado de Producto e
+// ItemCarrito porque describe otra cosa: la persona que compra, no un
+// producto.
 export interface DatosEnvio {
   nombre: string
   email: string
@@ -46,9 +40,9 @@ export interface DatosEnvio {
   telefono: string
 }
 
-// Un pedido ya confirmado: los datos de envío + una foto del carrito en
-// ese momento + el total. Se guarda tal cual quedó, aunque después el
-// carrito se vacíe o el catálogo cambie.
+// Un pedido ya confirmado: los datos de envío + los items del carrito en
+// ese momento + el total. Queda guardado así aunque después el carrito se
+// vacíe o el catálogo cambie.
 export interface Pedido {
   id: number
   fecha: string
@@ -57,13 +51,10 @@ export interface Pedido {
   total: number
 }
 
-// ---------- Sesión / login (Clase 7) ----------
-
-// Esto es lo que la APP necesita saber de quién inició sesión — NO es lo
-// mismo que lo que devuelve la API cruda (eso vive, sin exportarse, en
-// infraestructura/auth.ts). `expiraEn` es un timestamp en milisegundos
-// (Date.now() + los minutos que dura el token), para poder cerrar la
-// sesión sola cuando vence.
+// Lo que la app necesita saber de quién inició sesión (no es lo mismo que
+// lo que devuelve la API, eso se queda en infraestructura/auth.ts).
+// expiraEn es un timestamp en milisegundos para poder cerrar la sesión
+// sola cuando vence.
 export interface Usuario {
   id: number
   nombre: string
