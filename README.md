@@ -93,6 +93,26 @@ es la home (por ejemplo `/checkout`), porque React Router maneja las rutas del l
 cliente. Cada `git push` a `main` dispara un deploy nuevo automáticamente.
 ## Ejercicios extra (useReducer + accesibilidad)
 
+Sobre el reducer (carrito y filtros): antes cada estado se actualizaba por su cuenta, cada
+uno por separado. Con el reducer hay una sola función que recibe la acción y decide qué
+cambiar, así es más fácil seguir qué pasó y evitar que dos cambios se pisen entre sí.
+
+Sobre el foco automático del carrito: es pensando en alguien que navega solo con teclado o
+con un lector de pantalla. Antes, si abrías el carrito no había ninguna señal de que pasó
+algo. Ahora el foco salta directo al título "Tu carrito" apenas se abre, para que se note.
+Es una mejora de accesibilidad.
+
+## Mejoras extra (diseño y experiencia)
+
+Después de terminar la Clase 8, le seguí dando una vuelta al proyecto por mi cuenta:
+
+- Imágenes reales de cada producto (antes eran placeholders de placehold.co).
+- Animaciones y transiciones en las tarjetas de producto, el header, el carrito y el
+  checkout (aparición suave, efectos al pasar el mouse, etc.).
+- Rediseño del logo y del fondo de la página (degradado violeta, ícono de control).
+- Música de fondo con un botón para prenderla o apagarla.
+- Un mensaje que aparece al agregar un producto al carrito, para confirmar que se agregó.
+
 Sobre el reducer (carrito y filtros): antes, cada dato se guardaba y se cambiaba por su cuenta, cada uno en su propio lugar. Ahora hay un solo punto que recibe el pedido y decide qué hacer con él. Es como tener un solo encargado atendiendo todos los pedidos, en vez de que cada uno se resuelva por separado — así es más fácil saber qué pasó y no se pisan los cambios entre sí.
 
 Sobre el foco automático del carrito: pensé en alguien que navega la página solo con el teclado, sin mouse, o con un lector de pantalla. Antes, si abría el carrito, no había ninguna señal de que algo nuevo apareció. Ahora, apenas se abre, la atención salta directo al título "Tu carrito" — como avisarle "mira, esto se acaba de abrir". Es una mejora de accesibilidad.
