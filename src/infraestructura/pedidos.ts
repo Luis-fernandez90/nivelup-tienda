@@ -1,14 +1,13 @@
-// pedidos.ts — Clase 6. Guardar y leer los pedidos confirmados en
-// localStorage. El patrón es siempre el mismo: leer todo, armar una lista
-// NUEVA (spread + el nuevo pedido), y volver a guardar todo entero — acá
-// no hay servidor todavía, así que localStorage hace de "base de datos".
+// Guardar y leer los pedidos confirmados en localStorage. No hay servidor
+// todavía, así que localStorage hace de "base de datos": leo todo, armo
+// una lista nueva con el pedido agregado, y guardo todo de nuevo.
 import type { Pedido } from '../dominio/tipos'
 
 const CLAVE = 'nivelup_pedidos'
 
-// Defensivo a propósito: localStorage puede tener basura (datos de otra
-// versión del proyecto, o alguien tocando la consola a mano). Si el JSON
-// no es válido, o no es un array, devolvemos [] en vez de romper la app.
+// Defensivo a propósito: localStorage puede tener basura (de otra versión
+// del proyecto, o de alguien tocando la consola). Si el JSON no es válido
+// o no es un array, devuelvo [] en vez de romper la app.
 export function leerPedidos(): Pedido[] {
   try {
     const crudo = localStorage.getItem(CLAVE)
